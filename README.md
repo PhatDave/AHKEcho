@@ -6,13 +6,13 @@ F3 brings up UI which allows the user to select 1 or more applications to echo *
 
 In the current state ALL events are echoed, ~~customizability is planned~~
 
-### 1.1.x
+## 1.1.x
 
 Keys can now be whitelisted and only whitelisted keys will be echoed
 
 The whitelist menu can be accessed by pressing F4 and only keys pressed since the start of the program will be shown, user can then pick as many as they please to whitelist and only those the user picks will be echoed to other windows
 
-### 1.2.x
+## 1.2.x
 
 Keys can now be whitelisted by using hotkeys
 
@@ -25,3 +25,7 @@ Will add the next hit key to the whitelist
 `Ctrl + Alt + R`
 
 Will remove the next hit key from the whitelist
+
+## 1.3.x
+
+Windows can now be added to the echo list using `Ctrl+Alt+S` and `Ctrl+Alt+D` where S adds the **current** window and D removes the **current** window

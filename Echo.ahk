@@ -36,8 +36,9 @@ OnKeyDown(InputHook, VK, SC) {
         } else {
             sstring := "Key already exists"
             ShowTooltip(sstring)
-            addNext := 0asqq
+            addNext := 0
         }
+        return
     }
     if (removeNext) {
         if (whitelistKeys.HasKey(Key)) {
@@ -51,6 +52,7 @@ OnKeyDown(InputHook, VK, SC) {
             ShowTooltip(sstring)
             removeNext := 0
         }
+        return
     }
     if (whitelistKeys.HasKey(key)) {
         for k, v in enabledWindows[1] {
@@ -64,7 +66,7 @@ OnKeyDown(InputHook, VK, SC) {
 
 ShowTooltip(text) {
     ToolTip, %text%
-    SetTimer, RemoveToolTip, -500
+    SetTimer, RemoveToolTip, -800
 }
 
 RemoveToolTip:
@@ -121,10 +123,10 @@ WinGetAll() {
     Loop, %all%
     {
         WinGet, PID, PID, % "ahk_id " all%A_Index%
-        WinGetTitle, WTitle, % "ahk_id " all%A_Index%
-        if (WTitle != "") {
+        WinGet, name, ProcessName, % "ahk_id " all%A_Index%
+        if (name != "") {
             PIDs.Push(PID)
-            winTitles.Push(WTitle)
+            winTitles.Push(name)
         }
     }
     output.Push(PIDs)
@@ -193,7 +195,7 @@ GuiSelectActiveWindows(allWindows) {
 MakeUI() {
     Gui, Destroy
     string := AllWindowsToString()
-    Gui, Add, ListBox, Multi w500 vWindowListGUI r10, %string%
+    Gui, Add, ListBox, Multi h600 w800 vWindowListGUI, %string%
     Gui, Add, Button, Default, OK
     Gui, Show
     for k, v in GuiSelectActiveWindows(WinGetAll()) {
@@ -216,7 +218,7 @@ WhitelistButtonUI() {
     Gui, Destroy
     SortArray(keyLog)
     string := KeyLogToString()
-    Gui, Add, ListBox, Multi w500 vKeyLogUI r10, %string%
+    Gui, Add, ListBox, Multi h600 w800 vKeyLogUI, %string%
     Gui, Add, Button, Default, Save
     Gui, Show
     for k, v in GuiSelectActiveWindows(WinGetAll()) {
@@ -233,15 +235,28 @@ WhitelistKeys(string) {
     }
 }
 
+AddCurrentWindow() {
+    WinGet, activePID, PID, A
+    WinGet, activeName, ProcessName, A
+    enabledWindows[1].Insert(activePID)
+    enabledWindows[2].Insert(activeName)
+}
+
 F3::
     MakeUI()
 return
 
 ^!A::
+    ShowTooltip("Adding")
     addNext := 1
 return
 
+^!S::
+    AddCurrentWindow()
+return
+
 ^!R::
+    ShowTooltip("Removing")
     removeNext := 1
 return
 

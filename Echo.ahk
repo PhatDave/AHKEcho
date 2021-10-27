@@ -12,7 +12,7 @@ ih.OnKeyUp := Func("OnKeyUp")
 ih.Start()
 
 global enabledWindows := Array()
-enabledWindows.Push(Array())t
+enabledWindows.Push(Array())
 enabledWindows.Push(Array())
 
 global keyLog := {}

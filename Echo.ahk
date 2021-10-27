@@ -147,7 +147,7 @@ AllWindowsToString() {
     return output
 }
 
-HasVal(arr, val) {
+Find(arr, val) {
     for k, v in arr {
         if (v == val) {
             return k
@@ -164,7 +164,7 @@ EnableWindows(istring) {
     enabledWindows.Push(Array())
     if (InStr(istring, "|") == 0) {
         ostring := StrSplit(istring, ", ")
-        if (!HasVal(enabledWindows[1], (ostring[1]))) {
+        if (!Find(enabledWindows[1], (ostring[1]))) {
             enabledWindows[1].Push(ostring[1])
             enabledWindows[2].Push(ostring[2])
         }
@@ -172,7 +172,7 @@ EnableWindows(istring) {
         ostring := StrSplit(istring, "|")
         for k, v in ostring {
             ostring2 := StrSplit(v, ", ")
-            if (!HasVal(enabledWindows[1], (ostring2[1]))) {
+            if (!Find(enabledWindows[1], (ostring2[1]))) {
                 enabledWindows[1].Push(ostring2[1])
                 enabledWindows[2].Push(ostring2[2])
             }
@@ -184,7 +184,7 @@ EnableWindows(istring) {
 GuiSelectActiveWindows(allWindows) {
     output := Array()
     for k, v in allWindows[1] {
-        if (HasVal(enabledWindows[1], "" v)) {
+        if (Find(enabledWindows[1], "" v)) {
             ; GuiControl, Choose, WindowListGUI, k
             output.Push(k)
         }
@@ -237,9 +237,32 @@ WhitelistKeys(string) {
 
 AddCurrentWindow() {
     WinGet, activePID, PID, A
-    WinGet, activeName, ProcessName, A
-    enabledWindows[1].Insert(activePID)
-    enabledWindows[2].Insert(activeName)
+    if (!Find(enabledWindows[1], activePID)) {
+        WinGet, activeName, ProcessName, A
+        enabledWindows[1].Insert(activePID)
+        enabledWindows[2].Insert(activeName)
+        sstring := "Added "
+        sstring .= activePID
+        sstring .= " ("
+        sstring .= activeName
+        sstring .= ") to echo list"
+        ShowTooltip(sstring)
+    }
+}
+
+RemoveCurrentWindow() {
+    WinGet, activePID, PID, A
+    if (Find(enabledWindows[1], activePID)) {
+        WinGet, activeName, ProcessName, A
+        enabledWindows[1].RemoveAt(Find(enabledWindows[1], activePID))
+        enabledWindows[2].RemoveAt(Find(enabledWindows[2], activeName))
+        sstring := "Removed "
+        sstring .= activePID
+        sstring .= " ("
+        sstring .= activeName
+        sstring .= ") from echo list"
+        ShowTooltip(sstring)
+    }
 }
 
 F3::
@@ -247,16 +270,22 @@ F3::
 return
 
 ^!A::
-    ShowTooltip("Adding")
+    ShowTooltip("Adding key")
     addNext := 1
 return
 
 ^!S::
+    ShowTooltip("Adding window")
     AddCurrentWindow()
 return
 
+^!D::
+    ShowTooltip("Removing window")
+    RemoveCurrentWindow()
+return
+
 ^!R::
-    ShowTooltip("Removing")
+    ShowTooltip("Removing key")
     removeNext := 1
 return
 

@@ -5,11 +5,17 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 #Persistent
 
+SetKeyDelay, -1
+SetControlDelay, -1
+
 ih := InputHook("B")
 ih.KeyOpt("{All}", "NV")
 ih.OnKeyDown := Func("OnKeyDown")
 ih.OnKeyUp := Func("OnKeyUp")
 ih.Start()
+
+global addNext := 0
+global removeNext := 0
 
 global enabledWindows := Array()
 enabledWindows.Push(Array())
@@ -20,6 +26,32 @@ global whitelistKeys := Array()
 
 OnKeyDown(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
+    if (addNext) {
+        if (!whitelistKeys.HasKey(Key)) {
+            whitelistKeys[key] := 1
+            sstring := "Added "
+            sstring .= key
+            ShowTooltip(sstring)
+            addNext := 0
+        } else {
+            sstring := "Key already exists"
+            ShowTooltip(sstring)
+            addNext := 0asqq
+        }
+    }
+    if (removeNext) {
+        if (whitelistKeys.HasKey(Key)) {
+            whitelistKeys.Remove(key)
+            sstring := "Removed "
+            sstring .= key
+            ShowTooltip(sstring)
+            removeNext := 0
+        } else {
+            sstring := "Key not found"
+            ShowTooltip(sstring)
+            removeNext := 0
+        }
+    }
     if (whitelistKeys.HasKey(key)) {
         for k, v in enabledWindows[1] {
             ControlSend,, {%key% down}, ahk_pid %v%
@@ -28,9 +60,16 @@ OnKeyDown(InputHook, VK, SC) {
     if (!keyLog.HasKey(key)) {
         keyLog[key] := SC,
     }
-    ; ControlSend,, v, ahk_pid 16736
-    ; Tooltip, %key%
 }
+
+ShowTooltip(text) {
+    ToolTip, %text%
+    SetTimer, RemoveToolTip, -500
+}
+
+RemoveToolTip:
+    ToolTip
+return
 
 OnKeyUp(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
@@ -188,12 +227,22 @@ WhitelistButtonUI() {
 
 WhitelistKeys(string) {
     for k, v in StrSplit(string, "|") {
-        whitelistKeys.Insert(v)
+        if (v != "a" and v != "s" and v != "d" and v != "w" and v != "enter" and v != "escape") {
+            whitelistKeys[v] := 1
+        }
     }
 }
 
 F3::
     MakeUI()
+return
+
+^!A::
+    addNext := 1
+return
+
+^!R::
+    removeNext := 1
 return
 
 F4::

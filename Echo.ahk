@@ -12,7 +12,7 @@ ih.OnKeyUp := Func("OnKeyUp")
 ih.Start()
 
 global enabledWindows := Array()
-enabledWindows.Push(Array())
+enabledWindows.Push(Array())t
 enabledWindows.Push(Array())
 
 global keyLog := {}
@@ -134,8 +134,6 @@ KeyLogToString() {
     output := ""
     for k, v in keyLog {
         output .= k
-        output .= " "
-        output .= v
         output .= "|"
     }
     StringTrimRight, output, output, 1

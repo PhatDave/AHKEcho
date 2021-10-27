@@ -15,10 +15,18 @@ global enabledWindows := Array()
 enabledWindows.Push(Array())
 enabledWindows.Push(Array())
 
+global keyLog := {}
+global whitelistKeys := {}
+
 OnKeyDown(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    for k, v in enabledWindows[1] {
-        ControlSend,, {%key% down}, ahk_pid %v%
+    if (whitelistKeys.HasKey(key)) {
+        for k, v in enabledWindows[1] {
+            ControlSend,, {%key% down}, ahk_pid %v%
+        }
+    }
+    if (!keyLog.HasKey(key)) {
+        keyLog[key] := SC,
     }
     ; ControlSend,, v, ahk_pid 16736
     ; Tooltip, %key%
@@ -120,8 +128,45 @@ MakeUI() {
     }
 }
 
+KeyLogToString() {
+    output := ""
+    for k, v in keyLog {
+        output .= k
+        output .= "|"
+    }
+    StringTrimRight, output, output, 1
+    return output
+}
+
+WhitelistButtonUI() {
+    Gui, Destroy
+    string := KeyLogToString()
+    Gui, Add, ListBox, Multi w500 vKeyLogUI r10, %string%
+    Gui, Add, Button, Default, Save
+    Gui, Show
+    for k, v in GuiSelectActiveWindows(WinGetAll()) {
+        ; See what's wrong with choose, maybe it doesn't like to be called many times though just that is being done on forum guy
+        GuiControl, Choose, WindowListGUI, v
+    }
+}
+
+WhitelistKeys(string) {
+    for k, v in StrSplit(string, "|") {
+        whitelistKeys[v] := true
+    }
+}
+
 F3::
     MakeUI()
+return
+
+F4::
+    WhitelistButtonUI()
+return
+
+ButtonSave:
+    Gui, Submit
+    WhitelistKeys(KeyLogUI)
 return
 
 ButtonOK:

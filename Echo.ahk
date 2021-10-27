@@ -34,8 +34,10 @@ OnKeyDown(InputHook, VK, SC) {
 
 OnKeyUp(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    for k, v in enabledWindows[1] {
-        ControlSend,, {%key% up}, ahk_pid %v%
+    if (whitelistKeys.HasKey(key)) {
+        for k, v in enabledWindows[1] {
+            ControlSend,, {%key% up}, ahk_pid %v%
+        }
     }
 }
 
@@ -132,6 +134,8 @@ KeyLogToString() {
     output := ""
     for k, v in keyLog {
         output .= k
+        output .= " "
+        output .= v
         output .= "|"
     }
     StringTrimRight, output, output, 1

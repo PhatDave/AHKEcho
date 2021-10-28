@@ -24,6 +24,8 @@ enabledWindows.Push(Array())
 global keyLog := Array()
 global whitelistKeys := Array()
 
+SetTimer, ResetHook, -60000
+
 ; whitelistKeys["q"] := 1
 ; whitelistKeys["e"] := 1
 ; whitelistKeys[1] := 1
@@ -276,6 +278,17 @@ RemoveCurrentWindow() {
         ShowTooltip(sstring)
     }
 }
+
+ResetHook:
+    ih := InputHook("B")
+    ih.KeyOpt("{All}", "NV")
+    ih.OnKeyDown := Func("OnKeyDown")
+    ih.OnKeyUp := Func("OnKeyUp")
+    ih.Start()
+    ; Tooltip, WIN
+    SetTimer, ResetHook, -30000
+return
+
 
 F5::
     ih := InputHook("B")

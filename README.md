@@ -29,3 +29,9 @@ Will remove the next hit key from the whitelist
 ## 1.1.3
 
 Windows can now be added to the echo list using `Ctrl+Alt+S` and `Ctrl+Alt+D` where S adds the **current** window and D removes the **current** window
+
+## 1.1.4
+
+For some reason the keyboard hook sometimes gives up
+
+Added option to re-hook keyboard on `F5`

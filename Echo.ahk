@@ -241,10 +241,9 @@ WhitelistButtonUI() {
 }
 
 WhitelistKeys(string) {
+    whitelistKeys := Array()
     for k, v in StrSplit(string, "|") {
-        if (v != "a" and v != "s" and v != "d" and v != "w" and v != "enter" and v != "escape") {
-            whitelistKeys[v] := 1
-        }
+        whitelistKeys[v] := 1
     }
 }
 

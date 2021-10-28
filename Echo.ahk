@@ -24,6 +24,19 @@ enabledWindows.Push(Array())
 global keyLog := Array()
 global whitelistKeys := Array()
 
+; whitelistKeys["q"] := 1
+; whitelistKeys["e"] := 1
+; whitelistKeys[1] := 1
+; whitelistKeys[2] := 1
+; whitelistKeys[3] := 1
+; whitelistKeys[4] := 1
+; whitelistKeys["LShift"] := 1
+; whitelistKeys["LControl"] := 1
+; whitelistKeys["g"] := 1
+; whitelistKeys["v"] := 1
+; whitelistKeys["r"] := 1
+; whitelistKeys["f"] := 1
+
 OnKeyDown(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
     if (addNext) {
@@ -265,6 +278,14 @@ RemoveCurrentWindow() {
     }
 }
 
+F5::
+    ih := InputHook("B")
+    ih.KeyOpt("{All}", "NV")
+    ih.OnKeyDown := Func("OnKeyDown")
+    ih.OnKeyUp := Func("OnKeyUp")
+    ih.Start()
+return
+
 F3::
     MakeUI()
 return
@@ -303,4 +324,4 @@ ButtonOK:
     EnableWindows(WindowListGUI)
 return
 
-F5::reload
+; F5::reload

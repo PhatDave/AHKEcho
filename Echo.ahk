@@ -26,18 +26,20 @@ global whitelistKeys := Array()
 
 SetTimer, ResetHook, -60000
 
-; whitelistKeys["q"] := 1
-; whitelistKeys["e"] := 1
-; whitelistKeys[1] := 1
-; whitelistKeys[2] := 1
-; whitelistKeys[3] := 1
-; whitelistKeys[4] := 1
-; whitelistKeys["LShift"] := 1
-; whitelistKeys["LControl"] := 1
-; whitelistKeys["g"] := 1
-; whitelistKeys["v"] := 1
-; whitelistKeys["r"] := 1
-; whitelistKeys["f"] := 1
+whitelistKeys["q"] := 1
+whitelistKeys["e"] := 1
+whitelistKeys[1] := 1
+whitelistKeys[2] := 1
+whitelistKeys[3] := 1
+whitelistKeys[4] := 1
+whitelistKeys["LShift"] := 1
+whitelistKeys["LControl"] := 1
+whitelistKeys["g"] := 1
+whitelistKeys["v"] := 1
+whitelistKeys["r"] := 1
+whitelistKeys["f"] := 1
+whitelistKeys["c"] := 1
+whitelistKeys["y"] := 1
 
 OnKeyDown(InputHook, VK, SC) {
 	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
@@ -280,6 +282,7 @@ RemoveCurrentWindow() {
 }
 
 ResetHook:
+    ih.Stop()
     ih := InputHook("B")
     ih.KeyOpt("{All}", "NV")
     ih.OnKeyDown := Func("OnKeyDown")
@@ -291,6 +294,7 @@ return
 
 
 F5::
+    ih.Stop()
     ih := InputHook("B")
     ih.KeyOpt("{All}", "NV")
     ih.OnKeyDown := Func("OnKeyDown")

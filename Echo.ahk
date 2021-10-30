@@ -24,6 +24,8 @@ enabledWindows.Push(Array())
 global keyLog := Array()
 global whitelistKeys := Array()
 
+global paused := 0
+
 SetTimer, ResetHook, -60000
 
 whitelistKeys["q"] := 1
@@ -32,6 +34,7 @@ whitelistKeys[1] := 1
 whitelistKeys[2] := 1
 whitelistKeys[3] := 1
 whitelistKeys[4] := 1
+whitelistKeys[5] := 1
 whitelistKeys["LShift"] := 1
 whitelistKeys["LControl"] := 1
 whitelistKeys["g"] := 1
@@ -42,42 +45,44 @@ whitelistKeys["c"] := 1
 whitelistKeys["y"] := 1
 
 OnKeyDown(InputHook, VK, SC) {
-	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    if (addNext) {
-        if (!whitelistKeys.HasKey(Key)) {
-            whitelistKeys[key] := 1
-            sstring := "Added "
-            sstring .= key
-            ShowTooltip(sstring)
-            addNext := 0
-        } else {
-            sstring := "Key already exists"
-            ShowTooltip(sstring)
-            addNext := 0
+    if (!paused) {
+        key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
+        if (addNext) {
+            if (!whitelistKeys.HasKey(Key)) {
+                whitelistKeys[key] := 1
+                sstring := "Added "
+                sstring .= key
+                ShowTooltip(sstring)
+                addNext := 0
+            } else {
+                sstring := "Key already exists"
+                ShowTooltip(sstring)
+                addNext := 0
+            }
+            return
         }
-        return
-    }
-    if (removeNext) {
-        if (whitelistKeys.HasKey(Key)) {
-            whitelistKeys.Remove(key)
-            sstring := "Removed "
-            sstring .= key
-            ShowTooltip(sstring)
-            removeNext := 0
-        } else {
-            sstring := "Key not found"
-            ShowTooltip(sstring)
-            removeNext := 0
+        if (removeNext) {
+            if (whitelistKeys.HasKey(Key)) {
+                whitelistKeys.Remove(key)
+                sstring := "Removed "
+                sstring .= key
+                ShowTooltip(sstring)
+                removeNext := 0
+            } else {
+                sstring := "Key not found"
+                ShowTooltip(sstring)
+                removeNext := 0
+            }
+            return
         }
-        return
-    }
-    if (whitelistKeys.HasKey(key)) {
-        for k, v in enabledWindows[1] {
-            ControlSend,, {%key% down}, ahk_pid %v%
+        if (whitelistKeys.HasKey(key)) {
+            for k, v in enabledWindows[1] {
+                ControlSend,, {%key% down}, ahk_pid %v%
+            }
         }
-    }
-    if (!keyLog.HasKey(key)) {
-        keyLog[key] := SC,
+        if (!keyLog.HasKey(key)) {
+            keyLog[key] := SC,
+        }
     }
 }
 
@@ -91,10 +96,12 @@ RemoveToolTip:
 return
 
 OnKeyUp(InputHook, VK, SC) {
-	key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    if (whitelistKeys.HasKey(key)) {
-        for k, v in enabledWindows[1] {
-            ControlSend,, {%key% up}, ahk_pid %v%
+    if (!paused) {
+        key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
+        if (whitelistKeys.HasKey(key)) {
+            for k, v in enabledWindows[1] {
+                ControlSend,, {%key% up}, ahk_pid %v%
+            }
         }
     }
 }
@@ -292,6 +299,17 @@ ResetHook:
     SetTimer, ResetHook, -30000
 return
 
+TogglePause() {
+    if (paused) {
+        ShowTooltip("Unpaused")
+        paused := 0
+        return
+    }
+    ShowTooltip("Paused")
+    paused := 1
+    return
+}
+
 
 F5::
     ih.Stop()
@@ -328,6 +346,10 @@ return
 
 F4::
     WhitelistButtonUI()
+return
+
+F6::
+    TogglePause()
 return
 
 ButtonSave:

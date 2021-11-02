@@ -5,8 +5,8 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 #Persistent
 
-SetKeyDelay, -1
-SetControlDelay, -1
+SetKeyDelay, 0
+SetControlDelay, 100
 
 ih := InputHook("B")
 ih.KeyOpt("{All}", "NV")
@@ -27,22 +27,6 @@ global whitelistKeys := Array()
 global paused := 0
 
 SetTimer, ResetHook, -60000
-
-whitelistKeys["q"] := 1
-whitelistKeys["e"] := 1
-whitelistKeys[1] := 1
-whitelistKeys[2] := 1
-whitelistKeys[3] := 1
-whitelistKeys[4] := 1
-whitelistKeys[5] := 1
-whitelistKeys["LShift"] := 1
-whitelistKeys["LControl"] := 1
-whitelistKeys["g"] := 1
-whitelistKeys["v"] := 1
-whitelistKeys["r"] := 1
-whitelistKeys["f"] := 1
-whitelistKeys["c"] := 1
-whitelistKeys["y"] := 1
 
 OnKeyDown(InputHook, VK, SC) {
     if (!paused) {
@@ -86,15 +70,6 @@ OnKeyDown(InputHook, VK, SC) {
     }
 }
 
-ShowTooltip(text) {
-    ToolTip, %text%
-    SetTimer, RemoveToolTip, -800
-}
-
-RemoveToolTip:
-    ToolTip
-return
-
 OnKeyUp(InputHook, VK, SC) {
     if (!paused) {
         key := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
@@ -105,6 +80,15 @@ OnKeyUp(InputHook, VK, SC) {
         }
     }
 }
+
+ShowTooltip(text) {
+    ToolTip, %text%
+    SetTimer, RemoveToolTip, -800
+}
+
+RemoveToolTip:
+    ToolTip
+return
 
 ; Not really mine at all
 SortArray(Array, Order="A") {
@@ -350,6 +334,24 @@ return
 
 F6::
     TogglePause()
+return
+
+F7::
+    whitelistKeys["q"] := 1
+    whitelistKeys["e"] := 1
+    whitelistKeys[1] := 1
+    whitelistKeys[2] := 1
+    whitelistKeys[3] := 1
+    whitelistKeys[4] := 1
+    whitelistKeys[5] := 1
+    whitelistKeys["LShift"] := 1
+    whitelistKeys["LControl"] := 1
+    whitelistKeys["g"] := 1
+    whitelistKeys["v"] := 1
+    whitelistKeys["r"] := 1
+    whitelistKeys["f"] := 1
+    whitelistKeys["c"] := 1
+    whitelistKeys["y"] := 1
 return
 
 ButtonSave:
